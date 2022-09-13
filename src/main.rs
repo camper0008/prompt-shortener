@@ -1,11 +1,10 @@
 use std::env;
 
 fn get_pwd_as_string() -> String {
-    env::current_dir()
-        .unwrap()
-        .into_os_string()
-        .into_string()
-        .unwrap()
+    match env::current_dir() {
+        Ok(dir) => dir.into_os_string().into_string().unwrap(),
+        Err(_) => "DIR_ERROR".to_string(),
+    }
 }
 
 fn tilde_home_directory(path: String) -> Option<String> {
