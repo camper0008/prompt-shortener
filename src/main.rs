@@ -18,16 +18,27 @@ fn tilde_formatted_pwd() -> String {
     }
 }
 
+#[cfg(not(target_os = "windows"))]
+fn split_char() -> char {
+    '/'
+}
+
+#[cfg(target_os = "windows")]
+fn split_char() -> char {
+    '\\'
+}
+
 fn shorten_workspace_names(path: &str) -> String {
-    path.split('/')
+    let split = split_char();
+    path.split(split)
         .enumerate()
-        .map_while(|(i, s)| (i != path.split('/').count() - 1).then_some(s))
+        .map_while(|(i, s)| (i != path.split(split).count() - 1).then_some(s))
         .map(|s| match s.get(..2) {
             Some(v) => v,
             None => s,
         })
-        .fold(String::new(), |acc, cur| acc + cur + "/")
-        + path.split('/').last().unwrap()
+        .fold(String::new(), |acc, cur| acc + cur + &split.to_string())
+        + path.split(split).last().unwrap()
 }
 
 fn shorten_tilde_formatted_pwd() -> String {
