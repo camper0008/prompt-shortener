@@ -7,8 +7,19 @@ fn get_pwd_as_string() -> String {
     }
 }
 
+fn home_path() -> Option<String> {
+    #[cfg(not(target_os = "windows"))]
+    {
+        env::var("HOME").ok()
+    }
+    #[cfg(target_os = "windows")]
+    {
+        env::var("USERPROFILE").ok()
+    }
+}
+
 fn tilde_home_directory(path: &str) -> Option<String> {
-    Some(String::from("~") + path.strip_prefix(&env::var("HOME").ok()?)?)
+    Some(String::from("~") + path.strip_prefix(&home_path()?)?)
 }
 
 fn tilde_formatted_pwd() -> String {
