@@ -8,13 +8,10 @@ fn get_pwd_as_string() -> String {
 }
 
 fn home_path() -> Option<String> {
-    #[cfg(not(target_os = "windows"))]
-    {
-        env::var("HOME").ok()
-    }
-    #[cfg(target_os = "windows")]
-    {
+    if cfg!(windows) {
         env::var("USERPROFILE").ok()
+    } else {
+        env::var("HOME").ok()
     }
 }
 
@@ -29,14 +26,12 @@ fn tilde_formatted_pwd() -> String {
     }
 }
 
-#[cfg(not(target_os = "windows"))]
 fn split_char() -> char {
-    '/'
-}
-
-#[cfg(target_os = "windows")]
-fn split_char() -> char {
-    '\\'
+    if cfg!(windows) {
+        '\\'
+    } else {
+        '/'
+    }
 }
 
 fn shorten_workspace_names(path: &str) -> String {
